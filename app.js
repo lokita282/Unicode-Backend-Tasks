@@ -1,17 +1,23 @@
-// Task 2
+require('dotenv').config()
 
-const axios = require('axios')
+const express = require('express')
+const app = express()
+const mongoose = require('mongoose')
+const characterRouter = require('./routes/characters')
 
-axios.get('https://breakingbadapi.com/api/characters')
-.then((response) => {
-  console.log(response.data)
+mongoose.connect( process.env.DATABASE_URL, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true
 })
-.catch((e) => console.log(e))
 
-//BONUS
+const db = mongoose.connection
+db.on('error', (error) => console.error(error))
+db.once('open', () => console.log('connected to database'))
 
-axios.get('https://breakingbadapi.com/api/characters?category=Better+Call+Saul')
-.then((res) => {
-  console.log(res.data)
-})
-.catch((e) => console.log(e))
+app.use(express.json())
+
+app.use('/characters', characterRouter)
+
+app.listen(3000, () => console.log('server has started'))
