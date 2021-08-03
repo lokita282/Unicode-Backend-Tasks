@@ -1,4 +1,5 @@
 const express = require('express')
+const { findByIdAndDelete } = require('../models/character')
 const router = express.Router()
 const Character = require('../models/character')
 
@@ -7,16 +8,7 @@ const Character = require('../models/character')
 //Post request
 router.post('/store-to-database', async (req, res) => {
   const character = new Character({
-    char_id: req.body.char_id,
-    name: req.body.name,
-    birthday: req.body.birthday,
-    occupation: req.body.occupation,
-    img: req.body.img,
-    status: req.body.status,
-    nickname: req.body.nickname,
-    appearance: req.body.appearance,
-    portrayed: req.body.portrayed,
-    category: req.body.category,
+    ...req.body
   })
 
   try{
@@ -24,6 +16,21 @@ router.post('/store-to-database', async (req, res) => {
     res.status(201).json(newCharacter)
   } catch(e){
     res.status(400).send(e)
+    console.log(e)
+  }
+})
+
+//Delete request
+router.delete('/:id', async(req,res) => {
+  try{
+    const character = await Character.findByIdAndDelete({ _id: req.params.id })
+    if(!character){
+      res.status(404).send()
+    }
+    res.send(await Character.find({}))
+  } catch(e){
+    res.status(500).send()
+    console.log(e)
   }
 })
 

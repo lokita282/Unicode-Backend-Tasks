@@ -5,6 +5,7 @@ const characterSchema = new mongoose.Schema({
     type: Number,
     min : 1,
     max:  116,
+    unique: true,
     required: [true, 'Please enter a character id between 1-116']
   },
   name: {
